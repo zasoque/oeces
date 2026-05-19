@@ -34,7 +34,7 @@
 				<a href="/new">New Sentence</a>
 			{:else}
 				<a
-					href="https://discord.com/oauth2/authorize?client_id=1506229078687223950&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Flogin&scope=identify"
+					href="https://discord.com/oauth2/authorize?client_id=1506229078687223950&response_type=code&redirect_uri=https%3A%2F%2Foeces.zasoque.org%2Flogin&scope=identify"
 				>
 					Login
 				</a>
