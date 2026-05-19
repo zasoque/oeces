@@ -1,29 +1,46 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 
-	let { children } = $props();
+	let { children, data } = $props();
+	let { me } = $derived(data);
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<style>
-		body {
-			font-familiy:
-				-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		input {
+			width: 100%;
+			margin: 4px 0 8px 0;
 		}
 	</style>
+	<title>The Online Encyclopedia of Constructed language Example Sentences (OECES)</title>
 </svelte:head>
 
 <div class="container">
 	<header>
-		<h1>OECES</h1>
-		<p>Online Encyclopedia of Constructed language Example Sentences</p>
+		<a href="/">
+			<img src="/board.svg" alt="OECES Logo" class="board" />
+		</a>
 		<form method="get" action="/search">
 			<input type="text" name="q" />
 			<button type="submit">Search</button>
 		</form>
 	</header>
 	{@render children()}
+	<footer>
+		<p>
+			{#if me}
+				<a href="/logout">Logout</a>
+				<a href="/new">New Sentence</a>
+			{:else}
+				<a
+					href="https://discord.com/oauth2/authorize?client_id=1506229078687223950&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Flogin&scope=identify"
+				>
+					Login
+				</a>
+			{/if}
+		</p>
+	</footer>
 </div>
 
 <style>
@@ -35,5 +52,13 @@
 	header {
 		text-align: center;
 		margin-bottom: 16px;
+	}
+
+	.board {
+		max-width: 600px;
+	}
+
+	footer {
+		margin-top: 32px;
 	}
 </style>

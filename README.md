@@ -1,42 +1,35 @@
-# sv
+# OECES
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+```mariadb
+DROP DATABASE IF EXISTS oeces;
 
-## Creating a project
+CREATE DATABASE oeces;
 
-If you're seeing this, you've probably already done this step. Congrats!
+USE oeces;
 
-```sh
-# create a new project
-npx sv create my-app
+CREATE TABLE users (
+    id VARCHAR(30) PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sentences (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id VARCHAR(30) NOT NULL,
+    content TEXT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    language VARCHAR(50) NOT NULL,
+    source VARCHAR(255),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE keywords (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    sentence_id INT NOT NULL,
+    keyword VARCHAR(255) NOT NULL,
+    FOREIGN KEY (sentence_id) REFERENCES sentences(id) ON DELETE CASCADE
+);
 ```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-bun x sv@0.15.3 create --template minimal --types ts --add prettier --install bun .
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

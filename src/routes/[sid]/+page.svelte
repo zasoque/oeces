@@ -1,43 +1,41 @@
+<script>
+	const { data } = $props();
+	const { sentence } = $derived(data);
+</script>
+
 <div class="sentence">
 	<div class="sentence-header">
-		<div class="sentence-id">S000001</div>
-		<div class="sentence-content">This is a sentence.</div>
+		<div class="sentence-id">S{sentence.id}</div>
+		<div class="sentence-content">{sentence.content}</div>
 	</div>
-	<table>
-		<tbody>
-			<tr>
-				<td>언어</td>
-				<td>자소크어</td>
-			</tr>
-			<tr>
-				<td>댓글</td>
-				<td>와하하 댓글이래요 -- 스치, 2026. 5. 19</td>
-			</tr>
-			<tr>
-				<td>출처</td>
-				<td>내가씀 (이럴 때에는 출처를 딱히 안 써도 돼요)</td>
-			</tr>
-			<tr>
-				<td>참고</td>
-				<td>
-					참고로 볼 수 있을만한 글이나... 링크같은 거 적어놓으면 좋을 듯하요. 음하하 참고로 볼 수
-					있을만한 글이나... 링크같은 거 적어놓으면 좋을 듯하요.
-				</td>
-			</tr>
-			<tr>
-				<td>키워드</td>
-				<td>욕심 많은 광부 이야기, 사트</td>
-			</tr>
-			<tr>
-				<td>저자</td>
-				<td>자소크 스치</td>
-			</tr>
-			<tr>
-				<td>날짜</td>
-				<td>2026. 5. 19</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="row">
+		<div class="row-title">제목</div>
+		<div class="row-content">{sentence.title}</div>
+	</div>
+	<div class="row">
+		<div class="row-title">언어</div>
+		<div class="row-content">{sentence.language}</div>
+	</div>
+	{#if sentence.source}
+		<div class="row">
+			<div class="row-title">출처</div>
+			<div class="row-content">{sentence.source}</div>
+		</div>
+	{/if}
+	{#if sentence.notes}
+		<div class="row">
+			<div class="row-title">참고</div>
+			<div class="row-content">{sentence.notes}</div>
+		</div>
+	{/if}
+	<div class="row">
+		<div class="row-title">저자</div>
+		<div class="row-content">{sentence.username}</div>
+	</div>
+	<div class="row">
+		<div class="row-title">날짜</div>
+		<div class="row-content">{new Date(sentence.created_at).toLocaleString()}</div>
+	</div>
 </div>
 
 <style>
@@ -56,13 +54,19 @@
 		width: 100px;
 	}
 
-	table {
+	.row {
 		padding-left: 16px;
+		display: flex;
 	}
 
-	tr td:first-child {
-		min-width: 120px;
-		font-size: 12px;
-		vertical-align: top;
+	.row-title {
+		font-weight: bold;
+		width: 100px;
+	}
+
+	.row-content {
+		flex: 1;
+		padding-left: 16px;
+		text-indent: -16px;
 	}
 </style>
