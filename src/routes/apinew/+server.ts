@@ -51,5 +51,5 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
     `;
 	}
 
-	return redirect(303, `/${result.insertId}`);
+	return redirect(303, `/`);
 };
