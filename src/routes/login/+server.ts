@@ -50,6 +50,6 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
     ON DUPLICATE KEY UPDATE username = ${userData.username}
   `;
 
-	cookies.set('token', access_token, { path: '/' });
+	cookies.set('token', access_token, { path: '/', maxAge: 60 * 60 * 24 * 7 });
 	return redirect(302, '/');
 };
