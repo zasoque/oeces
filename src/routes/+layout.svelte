@@ -2,7 +2,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children, data } = $props();
-	let { me } = $derived(data);
+	let { me, discordRedirectUri } = $derived(data);
 </script>
 
 <svelte:head>
@@ -30,11 +30,14 @@
 	<footer>
 		<p>
 			{#if me}
+				{me.username}으로 로그인되어있음.
 				<a href="/logout">Logout</a>
 				<a href="/new">New Sentence</a>
 			{:else}
 				<a
-					href="https://discord.com/oauth2/authorize?client_id=1506229078687223950&response_type=code&redirect_uri=https%3A%2F%2Foeces.zasoque.org%2Flogin&scope=identify"
+					href="https://discord.com/oauth2/authorize?client_id=1506229078687223950&response_type=code&redirect_uri={encodeURIComponent(
+						discordRedirectUri
+					)}&scope=identify"
 				>
 					Login
 				</a>

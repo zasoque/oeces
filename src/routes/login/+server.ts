@@ -1,50 +1,55 @@
 import { db } from '$lib/database';
 import { redirect, type RequestHandler } from '@sveltejs/kit';
 
-// discord oauth2 callback handler
-export const GET: RequestHandler = async ({ cookies }) => {
-	const data = new URLSearchParams({
-		client_id: process.env.DISCORD_CLIENT_ID!,
-		client_secret: process.env.DISCORD_CLIENT_SECRET!,
-		grant_type: 'client_credentials',
-		scope: 'identify'
-	});
+// discord oauth2 get oauth2 token
+export const GET: RequestHandler = async ({ cookies, url }) => {
+	const code = url.searchParams.get('code');
 
-	const response = await fetch('https://discord.com/api/v10/oauth2/token', {
+	if (!code) {
+		throw new Error('No code provided');
+	}
+
+	const response = await fetch('https://discord.com/api/oauth2/token', {
 		method: 'POST',
-		body: data,
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
-		}
+		},
+		body: new URLSearchParams({
+			client_id: process.env.DISCORD_CLIENT_ID!,
+			client_secret: process.env.DISCORD_CLIENT_SECRET!,
+			grant_type: 'authorization_code',
+			code,
+			redirect_uri: process.env.DISCORD_REDIRECT_URI!
+		})
 	});
+
+	const data = await response.json();
 
 	if (!response.ok) {
-		throw new Error('Failed to fetch access token');
+		throw new Error(data.error_description || 'Failed to get access token');
 	}
 
-	const tokenData = await response.json();
-	console.log(tokenData.access_token);
-	cookies.set('token', tokenData.access_token, { path: '/' });
+	const { access_token } = data;
 
-	const me = await fetch('https://discord.com/api/v10/users/@me', {
+	// get user info from discord
+	const userResponse = await fetch('https://discord.com/api/users/@me', {
 		headers: {
-			Authorization: `Bearer ${tokenData.access_token}`
+			Authorization: `Bearer ${access_token}`
 		}
 	});
 
-	if (!me.ok) {
-		throw new Error('Failed to fetch user data');
+	const userData = await userResponse.json();
+
+	if (!userResponse.ok) {
+		throw new Error(userData.error_description || 'Failed to get user info');
 	}
 
-	const userData = await me.json();
-	console.log(userData);
-
-	// Store the user data in the database
 	await db`
     INSERT INTO users (id, username)
     VALUES (${userData.id}, ${userData.username})
     ON DUPLICATE KEY UPDATE username = ${userData.username}
   `;
 
+	cookies.set('token', access_token, { path: '/' });
 	return redirect(302, '/');
 };
